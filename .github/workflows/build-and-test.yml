@@ -1,0 +1,27 @@
+name: Build and test
+on:
+  workflow_call: #make workflow reusable
+    inputs:
+      upload-pages-artifact: #store workflow as artifact so it can be reused
+        type: boolean
+        required: false
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest 
+    steps:
+      - uses: actions/checkout@v3 #git checkout
+      - uses: actions/setup-node@v3 #install node
+        with:
+          node-version: 21
+      - run: npm ci #install json dependencies
+      - run: npm run build
+      - run: npm run test:integration
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v3 #store cypress videos
+        with:
+          name: e2e-videos
+          path: cypress/videos/
+      - if: ${{ inputs.upload-pages-artifact }} #if true
+        uses: actions/upload-pages-artifact@v1 #package and upload dir for github pages deployment
+        with:
+          path: build/ #upload this dir
