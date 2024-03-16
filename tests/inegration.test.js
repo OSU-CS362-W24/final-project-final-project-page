@@ -14,9 +14,10 @@ function initDomFromFiles(htmlPath, jsPath) {
 	})
 }
 
-// Mocking the alert method
+// Mocking the alert 
 const mockAlert = jest.fn();
 global.alert = mockAlert;
+
 
 
 describe("Adding values in the chart builder", () => {
@@ -29,34 +30,43 @@ describe("Adding values in the chart builder", () => {
 
   test("Verify functionality for adding new X and Y value input feilds", async () => {
     // Arrange
-    const addButton = domTesting.getByRole(document.body, 'button', { name: '+' });
+    // Get the add X Y values button 
+    const addButton = domTesting.getByRole(document.body, 'button', { name: '+' }); 
 
     // Act
+    // Simulate a user click on the "add XY values" button
     await userEvent.click(addButton);
 
+
     // Assert
+    // Find all input fields for X and Y values
     const xValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
     const yValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /Y/ });
+    // Endsure that that their are two input pair for X and Y
     expect(xValueInputs.length).toBe(2); 
     expect(yValueInputs.length).toBe(2); 
   });
   
   test("Verify that adding input feilds presevese previous feilds entering data in newly added input fields", async () => {
     // Arrange
+    // Fetch the add values button
     const addButton = domTesting.getByRole(document.body, 'button', { name: '+' });
-
+    // Fetch all existing X and Y avalues feilds in the document
     let xValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
     let yValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /Y/ });
     
 
     // Act
+    // Enter values into the first X and Y pairs
     await userEvent.type(xValueInputs[0], '100');
     await userEvent.type(yValueInputs[0], '200');
     await userEvent.click(addButton);
 
     // Assert
+    // Re-fetch all X and Y input feilds after adding new feilds
     xValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
     yValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /Y/ });
+    // Verifyt that the first X and Y value input field still contains 100
     expect(xValueInputs[0].value).toBe('100');
     expect(yValueInputs[0].value).toBe('200');
     expect(xValueInputs.length).toBe(2); 
@@ -65,21 +75,26 @@ describe("Adding values in the chart builder", () => {
 
   test("verifying ability to enter multiple sets of data in input fields", async () => {
     // Arrange
+    // Fetch the add values button and simulate click to add values
     const addButton = domTesting.getByRole(document.body, 'button', { name: '+' });
     await userEvent.click(addButton);
+    // Fetch all existing X and Y value input feilds
     let xValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
     let yValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /Y/ });
     
 
     // Act
+    // Enter data into the first and second input feilds
     await userEvent.type(xValueInputs[0], '400');
     await userEvent.type(yValueInputs[0], '300');
     await userEvent.type(xValueInputs[1], '200');
     await userEvent.type(yValueInputs[1], '100');
 
     // Assert
+    // Re-fetch all X and Y value input fields after data entry
     xValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
     yValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /Y/ });
+    // Verify data entered into the input feilds remains in data feild
     expect(xValueInputs[0].value).toBe('400');
     expect(yValueInputs[0].value).toBe('300');
     expect(xValueInputs[1].value).toBe('200');
@@ -104,30 +119,36 @@ describe("Alerts displayed for missing chart data", () => {
   
   test("Alert displayed when absolutly no data is provided", async () => {
     // Arrange
+    // find the generate chart button 
     const generateChartButton = domTesting.getByRole(document.body, 'button', { name: 'Generate chart' });
 
-    // Act: Click the button without providing any data
+    // Act
+    // Click the button without providing any data
     await userEvent.click(generateChartButton);
 
-    // Assert: Verify that alert is displayed
+    // Assert
+    // Verify that alert is displayed
     expect(mockAlert).toHaveBeenCalledWith('Error: No data specified!');
   });
 
   test("Alert displayed when no x y data provided", async () => {
     // Arrange
+    // Get nessart elements for chart generation and label entry
     const generateChartButton = domTesting.getByRole(document.body, 'button', { name: 'Generate chart' });
     const xLabelInput = domTesting.getByLabelText(document.body, 'X label');
     const yLabelInput = domTesting.getByLabelText(document.body, 'Y label');
 
 
-    // Act: Click the button without supplying axis labels
+    // Act 
+    // Enter labels and attemp to generate the chart without XY data
     await userEvent.click(generateChartButton);
     await userEvent.click(generateChartButton);
     await userEvent.type(xLabelInput, 'Your x-input text');
     await userEvent.type(yLabelInput, 'Your y-input text');
 
 
-    // Assert: Verify that alert is displayed
+    // Assert 
+    // Verify that labels are entered and alert is displayed
     expect(xLabelInput.value).toBe('Your x-input text');
     expect(yLabelInput.value).toBe('Your y-input text');
     expect(mockAlert).toHaveBeenCalledWith('Error: No data specified!');
@@ -135,6 +156,7 @@ describe("Alerts displayed for missing chart data", () => {
 
   test("Alert displayed when labels are missing", async () => {
     // Arrange
+    // Setup with XY input feilds without label 
     const addButton = domTesting.getByRole(document.body, 'button', { name: '+' });
     await userEvent.click(addButton);
     let xValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
@@ -144,7 +166,8 @@ describe("Alerts displayed for missing chart data", () => {
     const generateChartButton = domTesting.getByRole(document.body, 'button', { name: 'Generate chart' });
 
 
-    // Act: Click the button without supplying axis labels
+    // Act
+    // Input data and attempt to generate the chart without labels
     await userEvent.type(xValueInputs[0], '400');
     await userEvent.type(yValueInputs[0], '300');
     await userEvent.type(xValueInputs[1], '200');
@@ -152,7 +175,8 @@ describe("Alerts displayed for missing chart data", () => {
     await userEvent.click(generateChartButton);
 
 
-    // Assert: Verify that alert is displayed
+    // Assert
+    // Verify no labels are provided and the expected alert is shown
     expect(xLabelInput.value).toBe('');
     expect(yLabelInput.value).toBe('');
     expect(mockAlert).toHaveBeenCalledWith('Error: Must specify a label for both X and Y!');
@@ -170,28 +194,33 @@ describe("Clearing chart data", () => {
 
   test("Clear button clears x y values", async () => {
     // Arrange:
+    // Get the button for adding input fields and add two sets of X and Y input fields
     const addButton = domTesting.getByRole(document.body, 'button', { name: '+' });
     for (let i = 0; i < 2; i++){
       await userEvent.click(addButton);
     }
+    // Get all X and Y value input fields and the clear button
     let xValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
     let yValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /Y/ });
     const clearButton = domTesting.getByRole(document.body, 'button', { name: /Clear chart data/ });
     
 
     // Act: 
+    // Enter data into three sets of X and Y input fields
     await userEvent.type(xValueInputs[0], '400');
     await userEvent.type(yValueInputs[0], '300');
     await userEvent.type(xValueInputs[1], '200');
     await userEvent.type(yValueInputs[1], '100');
     await userEvent.type(xValueInputs[2], '500');
     await userEvent.type(yValueInputs[2], '600');
+    // Click the clear button
     await userEvent.click(clearButton);
 
     const updatedXValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
     const updatedYValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /Y/ });
 
     // Assert:
+    // Verify that the input fields are cleared and only one set remains
     expect(updatedXValueInputs[0].value).toBe('');
     expect(updatedYValueInputs[0].value).toBe('');
     expect(updatedXValueInputs).toHaveLength(1);
@@ -200,18 +229,23 @@ describe("Clearing chart data", () => {
 
   test("Clear button clears labels values", async () => {
     // Arrange:
+    // Get the input fields for X and Y labels and the clear button
     const xLabelInput = domTesting.getByLabelText(document.body, 'X label');
     const yLabelInput = domTesting.getByLabelText(document.body, 'Y label');
     const clearButton = domTesting.getByRole(document.body, 'button', { name: /Clear chart data/ });
     
-    // Act: 
+    // Act:  
+    // Enter text into the label input fields
     await userEvent.type(xLabelInput, 'x-label text');
     await userEvent.type(yLabelInput, 'y-label text');
+     // Click the clear button
     await userEvent.click(clearButton);
-    const updated_xLabelInput = domTesting.getByLabelText(document.body, 'X label');
-    const updated_yLabelInput = domTesting.getByLabelText(document.body, 'Y label');
+    
  
     // Assert:
+    // Verify that label input fields are cleared
+    const updated_xLabelInput = domTesting.getByLabelText(document.body, 'X label');
+    const updated_yLabelInput = domTesting.getByLabelText(document.body, 'Y label');
     expect(updated_xLabelInput.value).toBe('');
     expect(updated_yLabelInput.value).toBe('');
   });
@@ -219,15 +253,18 @@ describe("Clearing chart data", () => {
 
   test("Clear button clears title", async () => {
     // Arrange:
+    // Get the input field for chart title and the clear button
     const clearButton = domTesting.getByRole(document.body, 'button', { name: /Clear chart data/ });
     const chartTitleInput = domTesting.getByRole(document.body, 'textbox', { name: /Chart title/ });
 
     // Act: 
+    // Enter text into the chart title input field
     await userEvent.type(chartTitleInput, 'Some chart title');
     await userEvent.click(clearButton);
 
   
     // Assert:
+    // Verify that chart title input field is cleared
     const updated_chartTitleInput = domTesting.getByRole(document.body, 'textbox', { name: /Chart title/ });
     expect(updated_chartTitleInput.value).toBe('');
     
@@ -235,6 +272,7 @@ describe("Clearing chart data", () => {
 
   test("Clear button clears all chart data", async () => {
     // Arrange:
+    // Get necessary elements including input fields, labels, and the clear button
     const addButton = domTesting.getByRole(document.body, 'button', { name: '+' });
     const xLabelInput = domTesting.getByLabelText(document.body, 'X label');
     const yLabelInput = domTesting.getByLabelText(document.body, 'Y label');
@@ -255,12 +293,14 @@ describe("Clearing chart data", () => {
     await userEvent.type(yValueInputs[2], '600');
 
     // Act:
+    // Enter text into input fields and click the clear button
     await userEvent.type(xLabelInput, 'x-label text');
     await userEvent.type(yLabelInput, 'y-label text');
     await userEvent.type(chartTitleInput, 'Some chart title');
     await userEvent.click(clearButton);
 
     // Assert:
+    // Verify that all data including input fields, labels, and chart title are cleared
     const updatedXValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
     const updatedYValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /Y/ });
     const updated_xLabelInput = domTesting.getByLabelText(document.body, 'X label');
