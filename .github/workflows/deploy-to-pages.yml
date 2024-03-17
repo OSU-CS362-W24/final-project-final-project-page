@@ -1,0 +1,26 @@
+#run all tests when commits are pushed to main branch
+#build the app when commits are pushed to main branch
+#deploy built app
+
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build-and-test:
+    uses: ./.github/workflows/build-and-test.yml #call build and test workflow
+    with:
+      upload-pages-artifact: true
+  deploy-to-pages:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} #grab output by id
+    needs: build-and-test #wiat for build-and-test to finish before deploying
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/configure-pages@v3 #configure workflow
+      - uses: actions/deploy-pages@v2 #perform deployment
+        id: deployment
