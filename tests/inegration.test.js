@@ -1,6 +1,5 @@
 const fs = require("fs")
 const domTesting = require('@testing-library/dom')
-const { clear } = require("console")
 require('@testing-library/jest-dom')
 const userEvent = require("@testing-library/user-event").default
 
@@ -275,7 +274,8 @@ describe("Clearing chart data", () => {
     // Arrange:
     // Get the input field for chart color and the clear button
     const clearButton = domTesting.getByRole(document.body, 'button', { name: /Clear chart data/ });
-    const colorInput = document.getElementById('chart-color-input');
+    // const colorInput = document.getElementById('chart-color-input');
+    const colorInput = domTesting.getByTestId(document.body, 'chart-color-input');
 
     // Act: 
     // Enter new color into the chart color input field
