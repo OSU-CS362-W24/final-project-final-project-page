@@ -22,10 +22,10 @@ global.alert = mockAlert;
 
 describe("Adding values in the chart builder", () => {
   beforeEach(() => {
-  // Initialize DOM from HTML before each test case
-  initDomFromFiles(`${__dirname}/../src/scatter/scatter.html`, `${__dirname}/../src/scatter/scatter.js`);  
-  const clearButton = domTesting.getByRole(document.body, 'button', { name: /Clear chart data/ });
-  clearButton.click();
+    window.localStorage.clear()
+    // Initialize DOM from HTML before each test case
+    initDomFromFiles(`${__dirname}/../src/scatter/scatter.html`, `${__dirname}/../src/scatter/scatter.js`);  
+    window.localStorage.clear()
   });
 
   test("Verify functionality for adding new X and Y value input feilds", async () => {
@@ -107,10 +107,10 @@ describe("Adding values in the chart builder", () => {
 
 describe("Alerts displayed for missing chart data", () => {
   beforeEach(() => {
+    window.localStorage.clear()
     // Initialize DOM from HTML before each test case
     initDomFromFiles(`${__dirname}/../src/scatter/scatter.html`, `${__dirname}/../src/scatter/scatter.js`);  
-    const clearButton = domTesting.getByRole(document.body, 'button', { name: /Clear chart data/ });
-    clearButton.click();
+    window.localStorage.clear()
     
     // Assign the mock function to replace the global alert
     mockAlert.mockReset();
@@ -186,10 +186,11 @@ describe("Alerts displayed for missing chart data", () => {
 
 describe("Clearing chart data", () => {
   beforeEach(() => {
+    window.localStorage.clear()
     // Initialize DOM from HTML before each test case
     initDomFromFiles(`${__dirname}/../src/scatter/scatter.html`, `${__dirname}/../src/scatter/scatter.js`);  
-    const clearButton = domTesting.getByRole(document.body, 'button', { name: /Clear chart data/ });
-    clearButton.click();
+    window.localStorage.clear()
+    
   });
 
   test("Clear button clears x y values", async () => {
@@ -270,6 +271,26 @@ describe("Clearing chart data", () => {
     
   });
 
+  test("Clear button clears color", async () => {
+    // Arrange:
+    // Get the input field for chart color and the clear button
+    const clearButton = domTesting.getByRole(document.body, 'button', { name: /Clear chart data/ });
+    const colorInput = document.getElementById('chart-color-input');
+
+    // Act: 
+    // Enter new color into the chart color input field
+    await domTesting.fireEvent.input(colorInput, {target: {value: "#333333"}});
+    expect(colorInput.value).toBe("#333333"); // just to make sure it is actually changing
+    await userEvent.click(clearButton);
+
+  
+    // Assert:
+    // Verify that chart color input field is cleared, and returned to defualt
+    const updated_colorInput = document.getElementById('chart-color-input');
+    expect(updated_colorInput.value).toBe('#ff4500');
+    
+  });
+
   test("Clear button clears all chart data", async () => {
     // Arrange:
     // Get necessary elements including input fields, labels, and the clear button
@@ -319,43 +340,43 @@ describe("Clearing chart data", () => {
 
 });
 
-describe("Data correcttly sent to chart generation function", () => {
-  beforeEach(() => {
-    // Initialize DOM from HTML before each test case
-    initDomFromFiles(`${__dirname}/../src/scatter/scatter.html`, `${__dirname}/../src/scatter/scatter.js`);  
-    const clearButton = domTesting.getByRole(document.body, 'button', { name: /Clear chart data/ });
-    clearButton.click();
-  });
+// describe("Data correcttly sent to chart generation function", () => {
+//   beforeEach(() => {
+//     // Initialize DOM from HTML before each test case
+//     initDomFromFiles(`${__dirname}/../src/scatter/scatter.html`, `${__dirname}/../src/scatter/scatter.js`);  
+//     const clearButton = domTesting.getByRole(document.body, 'button', { name: /Clear chart data/ });
+//     clearButton.click();
+//   });
 
-  // test("Chart data integration test", async () => {
-  //   // Aquire
-  //   const addButton = domTesting.getByRole(document.body, 'button', { name: '+' });
-  //   const xLabelInput = domTesting.getByLabelText(document.body, 'X label');
-  //   const yLabelInput = domTesting.getByLabelText(document.body, 'Y label');
-  //   const chartTitleInput = domTesting.getByRole(document.body, 'textbox', { name: /Chart title/ });
-  //   const generateButton = domTesting.getByRole(document.body, 'button', { name: /Generate chart/ });
+//   test("Chart data integration test", async () => {
+//     // Aquire
+//     const addButton = domTesting.getByRole(document.body, 'button', { name: '+' });
+//     const xLabelInput = domTesting.getByLabelText(document.body, 'X label');
+//     const yLabelInput = domTesting.getByLabelText(document.body, 'Y label');
+//     const chartTitleInput = domTesting.getByRole(document.body, 'textbox', { name: /Chart title/ });
+//     const generateButton = domTesting.getByRole(document.body, 'button', { name: /Generate chart/ });
     
 
-  //   // Act
-  //   for (let i = 0; i < 2; i++){
-  //     await userEvent.click(addButton);
-  //   }
-  //   let xValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
-  //   let yValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /Y/ });
-  //   await userEvent.type(xValueInputs[0], '400');
-  //   await userEvent.type(yValueInputs[0], '300');
-  //   await userEvent.type(xValueInputs[1], '200');
-  //   await userEvent.type(yValueInputs[1], '100');
-  //   await userEvent.type(xValueInputs[2], '500');
-  //   await userEvent.type(yValueInputs[2], '600');
-  //   await userEvent.type(xLabelInput, 'x-label text');
-  //   await userEvent.type(yLabelInput, 'y-label text');
-  //   await userEvent.type(chartTitleInput, 'Some chart title');
-  //   await userEvent.click(generateButton);
+//     // Act
+//     for (let i = 0; i < 2; i++){
+//       await userEvent.click(addButton);
+//     }
+//     let xValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
+//     let yValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /Y/ });
+//     await userEvent.type(xValueInputs[0], '400');
+//     await userEvent.type(yValueInputs[0], '300');
+//     await userEvent.type(xValueInputs[1], '200');
+//     await userEvent.type(yValueInputs[1], '100');
+//     await userEvent.type(xValueInputs[2], '500');
+//     await userEvent.type(yValueInputs[2], '600');
+//     await userEvent.type(xLabelInput, 'x-label text');
+//     await userEvent.type(yLabelInput, 'y-label text');
+//     await userEvent.type(chartTitleInput, 'Some chart title');
+//     await userEvent.click(generateButton);
 
 
-  //   // Assert
-  // });
+//     // Assert
+//   });
   
-  // testing git hub branch commit stuff so maybe dont mess up 
-});
+//   testing git hub branch commit stuff so maybe dont mess up 
+// });
