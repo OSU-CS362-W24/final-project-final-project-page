@@ -1,10 +1,10 @@
-describe('visiting/gallery', () => {
+describe('initial', () => {
   it('passes', () => {
     cy.visit('http://localhost:8080/')
   })
 })
 
-describe('Line Chart Builder', () => {
+describe('Chart Builder', () => {
   beforeEach(() => {
     cy.visit('http://localhost:8080/line.html');
     
@@ -84,7 +84,7 @@ describe('Line Chart Builder', () => {
 
 
     // Assertion
-    cy.get('gallery').find('#chart-card').click();
+    cy.get('.chart-card').first().click();
     cy.get('#chart-display').should('not.be.empty');
     cy.get('#x-y-data-grid').find('input').should('have.length', 14);
   });
