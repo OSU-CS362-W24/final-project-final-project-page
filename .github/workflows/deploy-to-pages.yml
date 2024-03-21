@@ -5,7 +5,8 @@
 name: Deploy to GitHub Pages
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main 
 jobs:
   build-and-test:
     uses: ./.github/workflows/build-and-test.yml #call build and test workflow
