@@ -7,6 +7,7 @@
     "start": "webpack serve --open"
   },
   "devDependencies": {
+    "@testing-library/cypress": "^10.0.1",
     "css-loader": "^6.7.4",
     "cypress": "^13.7.0",
     "html-webpack-plugin": "^5.5.1",
