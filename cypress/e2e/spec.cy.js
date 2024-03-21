@@ -8,7 +8,7 @@ describe('initial', () => {
   })
 })
 
-describe('Chart Builder', () => {
+describe('chart builder', () => {
   beforeEach(() => {
     cy.visit('http://localhost:8080/line.html');
     
