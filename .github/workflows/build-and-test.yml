@@ -24,4 +24,4 @@ jobs:
       - if: ${{ inputs.upload-pages-artifact }} #if true
         uses: actions/upload-pages-artifact@v1 #package and upload dir for github pages deployment
         with:
-          path: build/ #upload this dir
+          path: dist/ #upload this dir
