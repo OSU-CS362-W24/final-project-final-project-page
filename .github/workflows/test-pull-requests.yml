@@ -1,0 +1,8 @@
+#run all tests when a pull request into the main branch is made
+
+
+name: Test pull requests
+on: [ pull_request ] #when a pull request is made
+jobs:
+  build-and-test:
+    uses: ./.github/workflows/build-and-test.ym #use build and test workflow 
