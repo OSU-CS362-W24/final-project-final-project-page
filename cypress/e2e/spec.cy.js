@@ -8,7 +8,7 @@ describe('initial', () => {
   })
 })
 
-describe('Chart Builder', () => {
+describe('chart builder', () => {
   beforeEach(() => {
     cy.visit('http://localhost:8080/line.html');
     
@@ -99,10 +99,10 @@ describe('Chart Builder', () => {
 
 
 
-    it('ensures graph is saved and reuploaded', () => {
+    it('ensures graph is saved', () => {
 
-    // Tests by generating a chart, saves the chart, clicks gallery link, searches for cats vs. dogs title and clicks
-    // then makes sure chart image exists and all data points exist
+    // Tests by generating a chart, saves the chart, clicks gallery link,
+    // then makes sure chart image exists
 
       // Assertion
       cy.contains('button', 'Generate chart').click();
@@ -110,16 +110,31 @@ describe('Chart Builder', () => {
 
       cy.contains('button', 'Save chart').click();
       cy.findByText('Gallery').click();
-
-
-
-      cy.findByText('Cats vs. Dogs').click();
       cy.findByRole('img').should('exist');
-      cy.findByLabelText('Chart title').should('have.value', 'Cats vs. Dogs');
-      cy.findByLabelText('X label').should('have.value', 'Cats');
-      cy.findByLabelText('Y label').should('have.value', 'Dogs');
-      cy.findAllByRole('spinbutton').should('have.length', 12);
 
     });
+
+    it('ensures graph can be reuploaded', () => {
+
+      // Tests by generating a chart, saves the chart, clicks gallery link, searches for cats vs. dogs title and clicks
+      // then makes sure chart image exists and all data points exist
+  
+        // Assertion
+        cy.contains('button', 'Generate chart').click();
+        cy.findByRole('img').should('exist');
+  
+        cy.contains('button', 'Save chart').click();
+        cy.findByText('Gallery').click();
+  
+  
+  
+        cy.findByText('Cats vs. Dogs').click();
+        cy.findByRole('img').should('exist');
+        cy.findByLabelText('Chart title').should('have.value', 'Cats vs. Dogs');
+        cy.findByLabelText('X label').should('have.value', 'Cats');
+        cy.findByLabelText('Y label').should('have.value', 'Dogs');
+        cy.findAllByRole('spinbutton').should('have.length', 12);
+  
+      });
 
 });
