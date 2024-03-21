@@ -2,6 +2,7 @@ const fs = require("fs")
 const domTesting = require('@testing-library/dom')
 require('@testing-library/jest-dom')
 const userEvent = require("@testing-library/user-event").default
+const { generateChartImg } = require('../src/lib/generateChartImg.js');
 
 function initDomFromFiles(htmlPath, jsPath) {
 	const html = fs.readFileSync(htmlPath, 'utf8')
@@ -338,61 +339,63 @@ describe("Clearing chart data", () => {
   });
 });
 
-// describe("Data correcttly sent to chart generation function", () => {
-//   beforeEach(() => {
-//     // Initialize DOM from HTML before each test case
-//     initDomFromFiles(`${__dirname}/../src/scatter/scatter.html`, `${__dirname}/../src/scatter/scatter.js`);  
-//     const clearButton = domTesting.getByRole(document.body, 'button', { name: /Clear chart data/ });
-//     clearButton.click();
+describe("Data correcttly sent to chart generation function", () => {
+  let generateChartImgSpy;
+  beforeEach(() => {
+    // Initialize DOM from HTML before each test case
+    window.localStorage.clear();
+    initDomFromFiles(`${__dirname}/../src/scatter/scatter.html`, `${__dirname}/../src/scatter/scatter.js`);  
+    window.localStorage.clear();
 
-//     jest.resetModules()
-//     jest.restoreAllMocks()
-//   });
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        ok: true,
+        blob: () => Promise.resolve(new Blob(['http://placekitten.com/480/480'], { type: 'application/json' })),
+      })
+    );
+  });
 
-
-//   test("Chart data integration test", async () => {
-//     initDomFromFiles(`${__dirname}/../src/line/line.html`, `${__dirname}/../src/line/line.js`)
-
-//     jest.mock("../src/lib/generateChartImg.js")
-//     const generateChartImgStub = require("../src/lib/generateChartImg")
-//     generateChartImgStub.mockImplementation(function() {
-//       return "http://placekitten.com/480/480"
-//     })
-//     // Aquire
-//     const addButton = domTesting.getByRole(document.body, 'button', { name: '+' });
-//     const xLabelInput = domTesting.getByLabelText(document.body, 'X label');
-//     const yLabelInput = domTesting.getByLabelText(document.body, 'Y label');
-//     const chartTitleInput = domTesting.getByRole(document.body, 'textbox', { name: /Chart title/ });
-//     const generateButton = domTesting.getByRole(document.body, 'button', { name: /Generate chart/ });
-
-//     // Act
-//     for (let i = 0; i < 2; i++){
-//       await userEvent.click(addButton);
-//     }
-//     let xValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
-//     let yValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /Y/ });
-//     await userEvent.type(xValueInputs[0], '400');
-//     await userEvent.type(yValueInputs[0], '300');
-//     await userEvent.type(xValueInputs[1], '200');
-//     await userEvent.type(yValueInputs[1], '100');
-//     await userEvent.type(xValueInputs[2], '500');
-//     await userEvent.type(yValueInputs[2], '600');
-//     await userEvent.type(xLabelInput, 'x-label text');
-//     await userEvent.type(yLabelInput, 'y-label text');
-//     await userEvent.type(chartTitleInput, 'Some chart title');
-//     await userEvent.click(generateButton);
-
-//     //Assert
-//     expect(generateChartImgStub).toHaveBeenCalledTimes(1);
-//     expect(generateChartImgStub).toHaveBeenCalledWith({
-//       xValues: ['400', '200', '500'],
-//       yValues: ['300', '100', '600'],
-//       xLabel: 'x-label text',
-//       yLabel: 'y-label text',
-//       chartTitle: 'Some chart title'
-//     });
-//     generateChartImgStub.mockRestore()
-//   });
   
-//   // testing git hub branch commit stuff so maybe dont mess up 
-// });
+  afterEach(() => {
+    // Ensure the spy is restored to its original state after each test
+    global.fetch.mockClear();
+  });
+
+  test("Chart data integration test", async () => {
+    let generateChartImgSpy;
+    // Aquire
+    const addButton = domTesting.getByRole(document.body, 'button', { name: '+' });
+    const xLabelInput = domTesting.getByLabelText(document.body, 'X label');
+    const yLabelInput = domTesting.getByLabelText(document.body, 'Y label');
+    const chartTitleInput = domTesting.getByRole(document.body, 'textbox', { name: /Chart title/ });
+    const generateButton = domTesting.getByRole(document.body, 'button', { name: /Generate chart/ });
+    
+
+    // Act
+    for (let i = 0; i < 2; i++){
+      await userEvent.click(addButton);
+    }
+    let xValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /X/ });
+    let yValueInputs = domTesting.queryAllByRole(document.body, 'spinbutton', { name: /Y/ });
+    await userEvent.type(xValueInputs[0], '400');
+    await userEvent.type(yValueInputs[0], '300');
+    await userEvent.type(xValueInputs[1], '200');
+    await userEvent.type(yValueInputs[1], '100');
+    await userEvent.type(xValueInputs[2], '500');
+    await userEvent.type(yValueInputs[2], '600');
+    await userEvent.type(xLabelInput, 'x-label text');
+    await userEvent.type(yLabelInput, 'y-label text');
+    await userEvent.type(chartTitleInput, 'Some chart title');
+    await userEvent.click(generateButton);
+
+    // Assert
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining("https://quickchart.io/chart"), // URL
+      expect.objectContaining({
+        method: "POST"
+      })
+    );
+
+  });
+});
