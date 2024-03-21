@@ -335,9 +335,7 @@ describe("Clearing chart data", () => {
     expect(updated_xLabelInput.value).toBe('');
     expect(updated_yLabelInput.value).toBe('');
     expect(updated_chartTitleInput.value).toBe('');
-});
-
-
+  });
 });
 
 // describe("Data correcttly sent to chart generation function", () => {
@@ -346,16 +344,26 @@ describe("Clearing chart data", () => {
 //     initDomFromFiles(`${__dirname}/../src/scatter/scatter.html`, `${__dirname}/../src/scatter/scatter.js`);  
 //     const clearButton = domTesting.getByRole(document.body, 'button', { name: /Clear chart data/ });
 //     clearButton.click();
+
+//     jest.resetModules()
+//     jest.restoreAllMocks()
 //   });
 
+
 //   test("Chart data integration test", async () => {
+//     initDomFromFiles(`${__dirname}/../src/line/line.html`, `${__dirname}/../src/line/line.js`)
+
+//     jest.mock("../src/lib/generateChartImg.js")
+//     const generateChartImgStub = require("../src/lib/generateChartImg")
+//     generateChartImgStub.mockImplementation(function() {
+//       return "http://placekitten.com/480/480"
+//     })
 //     // Aquire
 //     const addButton = domTesting.getByRole(document.body, 'button', { name: '+' });
 //     const xLabelInput = domTesting.getByLabelText(document.body, 'X label');
 //     const yLabelInput = domTesting.getByLabelText(document.body, 'Y label');
 //     const chartTitleInput = domTesting.getByRole(document.body, 'textbox', { name: /Chart title/ });
 //     const generateButton = domTesting.getByRole(document.body, 'button', { name: /Generate chart/ });
-    
 
 //     // Act
 //     for (let i = 0; i < 2; i++){
@@ -374,9 +382,17 @@ describe("Clearing chart data", () => {
 //     await userEvent.type(chartTitleInput, 'Some chart title');
 //     await userEvent.click(generateButton);
 
-
-//     // Assert
+//     //Assert
+//     expect(generateChartImgStub).toHaveBeenCalledTimes(1);
+//     expect(generateChartImgStub).toHaveBeenCalledWith({
+//       xValues: ['400', '200', '500'],
+//       yValues: ['300', '100', '600'],
+//       xLabel: 'x-label text',
+//       yLabel: 'y-label text',
+//       chartTitle: 'Some chart title'
+//     });
+//     generateChartImgStub.mockRestore()
 //   });
   
-//   testing git hub branch commit stuff so maybe dont mess up 
+//   // testing git hub branch commit stuff so maybe dont mess up 
 // });
