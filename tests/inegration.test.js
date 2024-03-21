@@ -338,7 +338,6 @@ describe("Clearing chart data", () => {
     expect(updated_chartTitleInput.value).toBe('');
   });
 });
-
 describe("Data correcttly sent to chart generation function", () => {
   let generateChartImgSpy;
   beforeEach(() => {
