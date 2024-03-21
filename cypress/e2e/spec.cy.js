@@ -23,18 +23,20 @@ describe('Chart Builder', () => {
       cy.contains('button', '+').click();
     }
 
-    // Adding Values based off the videos
-    cy.get('#x-y-data-grid').find('input').eq(2).type('1');
-    cy.get('#x-y-data-grid').find('input').eq(3).type('3');
-    cy.get('#x-y-data-grid').find('input').eq(4).type('2');
-    cy.get('#x-y-data-grid').find('input').eq(5).type('7');
-    cy.get('#x-y-data-grid').find('input').eq(6).type('3');
-    cy.get('#x-y-data-grid').find('input').eq(7).type('15');
-    cy.get('#x-y-data-grid').find('input').eq(8).type('4');
-    cy.get('#x-y-data-grid').find('input').eq(9).type('25');
-    cy.get('#x-y-data-grid').find('input').eq(10).type('5');
-    cy.get('#x-y-data-grid').find('input').eq(11).type('40');
-    cy.get('#x-y-data-grid').find('input').eq(12).click();
+    // Adding Values based off the videos running through each spin button
+    cy.findAllByRole('spinbutton').then(($spinbuttons) => {
+    cy.wrap($spinbuttons).eq(0).type('1');
+    cy.wrap($spinbuttons).eq(1).type('3');
+    cy.wrap($spinbuttons).eq(2).type('2');
+    cy.wrap($spinbuttons).eq(3).type('7');
+    cy.wrap($spinbuttons).eq(4).type('3');
+    cy.wrap($spinbuttons).eq(5).type('15');
+    cy.wrap($spinbuttons).eq(6).type('4');
+    cy.wrap($spinbuttons).eq(7).type('25');
+    cy.wrap($spinbuttons).eq(8).type('5');
+    cy.wrap($spinbuttons).eq(9).type('40');
+    cy.wrap($spinbuttons).eq(10).click();
+      });
     });
 
   it('generates chart correctly', () => {
@@ -44,7 +46,7 @@ describe('Chart Builder', () => {
     // Assertion
     cy.contains('button', 'Generate chart').click();
     cy.findByLabelText('Chart title').should('have.value', 'Cats vs. Dogs');
-    cy.get('#chart-display').should('not.be.empty');
+    cy.findByRole('img').should('exist');
     cy.findAllByRole('spinbutton').should('have.length', 12);
   });
     
@@ -99,11 +101,12 @@ describe('Chart Builder', () => {
 
     it('ensures graph is saved and reuploaded', () => {
 
-    //=============================NEED COMMENTS==================================
+    // Tests by generating a chart, saves the chart, clicks gallery link, searches for cats vs. dogs title and clicks
+    // then makes sure chart image exists and all data points exist
 
       // Assertion
       cy.contains('button', 'Generate chart').click();
-      cy.get('#chart-display').should('not.be.empty');
+      cy.findByRole('img').should('exist');
 
       cy.contains('button', 'Save chart').click();
       cy.findByText('Gallery').click();
@@ -111,7 +114,10 @@ describe('Chart Builder', () => {
 
 
       cy.findByText('Cats vs. Dogs').click();
-      cy.get('#chart-display').should('not.be.empty');
+      cy.findByRole('img').should('exist');
+      cy.findByLabelText('Chart title').should('have.value', 'Cats vs. Dogs');
+      cy.findByLabelText('X label').should('have.value', 'Cats');
+      cy.findByLabelText('Y label').should('have.value', 'Dogs');
       cy.findAllByRole('spinbutton').should('have.length', 12);
 
     });
