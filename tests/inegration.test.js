@@ -355,6 +355,7 @@ describe("Data correcttly sent to chart generation function", () => {
     );
   });
 
+  
   afterEach(() => {
     // Ensure the spy is restored to its original state after each test
     global.fetch.mockClear();
